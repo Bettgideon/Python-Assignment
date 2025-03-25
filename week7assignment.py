@@ -19,9 +19,7 @@ try:
     
     print("\nChecking for missing values:")
     print(df.isnull().sum())
-    
-    # No missing values in this dataset, but if there were, we could fill/drop them:
-    # df.fillna(method='ffill', inplace=True)
+
 except Exception as e:
     print(f"Error loading dataset: {e}")
 
@@ -30,17 +28,18 @@ print("\nBasic statistics:")
 print(df.describe())
 
 # Grouping by species and calculating mean values
-species_group = df.groupby('species').mean()
+species_group = df.groupby('species', as_index=False).mean()
 print("\nMean values for each species:")
 print(species_group)
 
 # Task 3: Data Visualization
 sns.set(style="whitegrid")
 
-# Line Chart: Trend over index (since no time variable, using index as x-axis)
+# Line Chart: Sepal Length trend (ordered by species)
 plt.figure(figsize=(10, 5))
-plt.plot(df.index, df['sepal length (cm)'], label='Sepal Length', linestyle='-', marker='o')
-plt.xlabel('Index')
+df_sorted = df.sort_values(by=['species', 'sepal length (cm)'])
+plt.plot(df_sorted.index, df_sorted['sepal length (cm)'], label='Sepal Length', linestyle='-', marker='o', color='blue')
+plt.xlabel('Index (Sorted)')
 plt.ylabel('Sepal Length (cm)')
 plt.title('Trend of Sepal Length Over Index')
 plt.legend()
@@ -48,7 +47,7 @@ plt.show()
 
 # Bar Chart: Average petal length per species
 plt.figure(figsize=(8, 5))
-sns.barplot(x='species', y='petal length (cm)', data=df, palette='viridis')
+sns.barplot(x='species', y='petal length (cm)', data=df, palette='viridis', estimator=np.mean)
 plt.xlabel('Species')
 plt.ylabel('Average Petal Length (cm)')
 plt.title('Average Petal Length per Species')
@@ -64,7 +63,7 @@ plt.show()
 
 # Scatter Plot: Sepal Length vs. Petal Length
 plt.figure(figsize=(8, 5))
-sns.scatterplot(x='sepal length (cm)', y='petal length (cm)', hue='species', data=df, palette='deep')
+sns.scatterplot(x='sepal length (cm)', y='petal length (cm)', hue='species', data=df, palette='deep', s=100)
 plt.xlabel('Sepal Length (cm)')
 plt.ylabel('Petal Length (cm)')
 plt.title('Sepal Length vs. Petal Length by Species')
